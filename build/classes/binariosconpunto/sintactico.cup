@@ -1,0 +1,83 @@
+
+package binariosconpunto;
+import java_cup.runtime.Symbol;
+
+parser code 
+{:
+    public void syntax_error(Symbol s){
+            String error =" ERROR Sintactico en token: "+s.value+" en linea: " +(s.left + 1 )+" y columna: "+(s.right + 1)+"\n";
+        System.out.println(error);
+    }
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+            String error =" ERROR Sintactico en token: "+s.value+" en linea: " +(s.left + 1 )+" y columna: "+(s.right + 1)+"\n";    
+        System.out.println(error);
+    }
+:}
+
+
+terminal String        numeroBinario,punto;
+
+nonterminal Double  binario, ladoI, ladoD,cifra,s;
+
+
+start with s;
+
+s ::= cifra:c 
+{:
+     System.out.println("El valor es de "+ c);
+:};
+
+cifra ::=   ladoD:ld punto ladoI:li 
+{:
+    Double  numero = ld+li;
+    RESULT = numero;
+:}
+|
+            ladoD:ld
+{:
+    RESULT = ld;
+:};
+
+ladoD ::=   ladoD:ld binario:b 
+{:
+    System.out.println("\t\t / ladoDerecho -> "+ ld);
+    System.out.println("\t\t \\ binario -> "+ b);
+    Double numero= ((2* ld )+ b); 
+    System.out.println("\t Total derecho: "+ numero);
+    System.out.println("");
+    RESULT = numero;
+:}
+|
+            binario:b 
+{:
+    System.out.println("\t\t\t\t / binario -> "+ b);
+    RESULT= b;
+:}
+;
+
+ladoI ::=    binario:b  ladoI:li
+{:
+    Double ladoI=(li*1/2);
+    Double binI=(b*1/2);
+    Double numero=(ladoI + binI);
+    System.out.println("\t\t / ladoIzquierdo -> "+ ladoI);
+    System.out.println("\t\t \\ binario -> "+ binI);
+    System.out.println("\t Total izquierdo: "+ numero);
+    System.out.println("");
+
+    RESULT = numero;
+:}
+|
+            binario:b
+{:
+    Double numero = (b*1/2);
+    RESULT = numero;
+    System.out.println("\t\t\t\t / binario -> "+ numero);
+:}
+;
+
+binario ::= numeroBinario:n 
+{:
+    RESULT = new Double(n);
+:}
+; 
